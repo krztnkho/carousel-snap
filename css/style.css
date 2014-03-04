@@ -10,13 +10,16 @@ ul {
 	min-height      : 300px;
 	list-style-type : none;
 }
-.vid-tab {
+#holder {
 	width    : 1224px;
 	display  : block;
 	padding  : 0;
 	margin   : 0 auto;
-	height   : 309px;
 	overflow : hidden;
+}
+.vid-tab {
+	padding  : 0;
+	height   : 309px;
 }
 .vid-tab li {
 	width    : 281px;
