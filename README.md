@@ -1,7 +1,7 @@
 Carousel Snap
 =============
 
-A jQuery plugin that creates a percentage circle based on pure CSS.
+A jQuery carousel plugin with lazy loading functionality.
 
 ### Demo
 
