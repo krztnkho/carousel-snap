@@ -26,7 +26,7 @@ A jQuery carousel plugin with lazy loading functionality.
 Below is an example of the code with all available options and their defaults:
 
 ```JavaScript
-$( '#circle' ).carouselSnap({
+$( '#carousel' ).carouselSnap({
 
 });
 ```

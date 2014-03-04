@@ -6,8 +6,6 @@ div {
 	display: block;
 }
 ul {
-	margin-bottom   : 50px;
-	min-height      : 300px;
 	list-style-type : none;
 }
 #holder {
@@ -16,6 +14,7 @@ ul {
 	padding  : 0;
 	margin   : 0 auto;
 	overflow : hidden;
+	position : relative;
 }
 .vid-tab {
 	padding  : 0;
@@ -61,4 +60,26 @@ ul {
 }
 .vid-tab li img.related {
 	width: 100%;
+}
+.prevNext {
+	cursor      : pointer;
+	width       : 45px;
+	height      : 281px;
+	background  : url('../img/left-arrow.png') no-repeat center center rgba(0,0,0,.1);
+	text-indent : -9999px;
+	border      : 0;
+	z-index     : 10000;
+	position    : absolute;
+	top         : 0;
+	left        : 0;
+	margin-top  : 24px;
+	display     : none;
+}
+.nextLink {
+	background  : url('../img/left-arrow-right.png') no-repeat center center rgba(0,0,0,.1);
+	right: 0;
+	left: auto;
+}
+#holder:hover .prevNext {
+	display: inline-block;
 }

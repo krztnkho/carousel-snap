@@ -1,7 +1,6 @@
 /**************************************************************
  *
  * Carousel Snap 1.0
- * by Jes Anub
  *
  **************************************************************/
 
@@ -13,8 +12,11 @@
 		var setContainerWidth = function() {
 			container.css( 'width', containerLength );
 		};
-
+		var appendPrevNextButtons = function () {
+			container.after('<div class="prevNext prevLink" id="' + settings.prevID + '">Previous</div><div class="prevNext nextLink" id="' + settings.nextID + '">Next</div>');
+		}
 		var initialize = function () {
+			appendPrevNextButtons();
 			setContainerWidth();
 		}
 
@@ -34,7 +36,8 @@
 	};
 
 	$.fn.carouselSnap.defaults = {
-
+		nextID: 'next-slide',
+		prevID: 'previous-slide'
 	};
 
 } )( jQuery );
