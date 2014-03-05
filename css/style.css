@@ -21,7 +21,7 @@ ul {
 	height   : 309px;
 }
 .vid-tab li {
-	width    : 281px;
+	width    : 282px;
 	margin   : 12px;
 	float    : left;
 	position : relative;
@@ -82,4 +82,21 @@ ul {
 }
 #holder:hover .prevNext {
 	display: inline-block;
+}
+li.dummy {
+	width: 282px;
+	height: 281px;
+	background: rgba(0,0,0,1);
+}
+li.dummy.black {
+	background: rgba(0,0,0,.3);
+}
+li.dummy.red {
+	background: rgba(255,0,0,.3);
+}
+li.dummy.green {
+	background: rgba(0,255,0,.3);
+}
+li.dummy.blue {
+	background: rgba(0,0,255,.3);
 }
