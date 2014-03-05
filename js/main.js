@@ -3,7 +3,7 @@
 	var colorArrays = [ 'black', 'red', 'green', 'blue' ];
 	var color = 0;
 	var loadMoreElements = function( callback ) {
-		for (var i = 1; i <= 4; i++) {
+		for (var i = 1; i <= 8; i++) {
 			$('.vid-tab').append('<li class="dummy ' + colorArrays[ color ] + '"></li>');
 		};
 		if( color < colorArrays.length ) {
@@ -17,9 +17,9 @@
 	$('.vid-tab').carouselSnap({
 		nextID: 'nextSlide',
 		prevID: 'previousSlide',
-		elementsToMove: 4,
-		onFirstScroll: loadMoreElements,
+		elementsToMove: 2,
+		fetchFunction: loadMoreElements,
 		loadPerFetch: 8,
-		totalItems: 12
+		totalItems: 40
 	});
 })( jQuery );

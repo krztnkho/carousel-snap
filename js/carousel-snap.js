@@ -9,10 +9,12 @@
 
 		var settings = $.extend( {}, $.fn.carouselSnap.defaults, options );
 
-		var currentPane  = 0;
+		var currentPane  = 1;
+		var fetchOnThisPane = 1;
 		var domReady     = true;
 		var container    = $( element );
 		var visibleItems = settings.elementsToMove;
+		var currentLeftValue;
 
 		var itemLength;
 		var containerLength;
@@ -57,38 +59,60 @@
 
 		var initializeSettings = function () {
 			itemLength = 	container.children().length;
-			paneToFetch = ( itemLength / visibleItems );
-			currentTotalPanes = paneToFetch - 1;
+			paneToFetch = Math.ceil( itemLength / visibleItems );
+			currentTotalPanes = paneToFetch ;
 			totalPanes = Math.ceil( ( settings.totalItems / visibleItems ) );
 		}
 
-		var fetchOnFirstPane = function () {
-			settings.onFirstScroll( function( domCheck ) {
+		var isGroupsFirstPane = function () {
+			return ( ( currentTotalPanes < totalPanes ) && ( fetchOnThisPane == currentPane ) ) ? true : false;
+		}
+
+		var fetchOnGroupsFirstPane = function () {
+			console.log( 'Fetch' );
+			console.log(	'totalPanes: ' + totalPanes );
+			console.log(	'currentPane: ' + currentPane );
+			console.log( 'currentTotalPanes: ' + currentTotalPanes );
+			settings.fetchFunction( function( domCheck ) {
 				domReady = domCheck;
+				console.log( 'fetchOnThisPane: ' + fetchOnThisPane );
 			} );
+			fetchOnThisPane = currentTotalPanes + 1;
 			setContainerWidth();
 			initializeSettings();
 		}
 
+		var getLeft = function () {
+			currentLeftValue = container.children().css('left');
+		}
+
+		var setLeft = function () {
+			container.children().css( 'left', currentLeftValue );
+		}
+
 		var listenToClick = function () {
 			console.log(	'totalPanes: ' + totalPanes );
-			console.log(	'currentPane: ' + (currentPane + 1) );
-			console.log( 'currentTotalPanes: ' + (currentTotalPanes + 1) );
+			console.log(	'currentPane: ' + currentPane );
+			console.log( 'currentTotalPanes: ' + currentTotalPanes );
 			$( '#' + settings.nextID ).click( function() {
 				if( (currentPane < currentTotalPanes) && domReady ){
-					if ( !currentPane ) {
-						fetchOnFirstPane();
+					if ( isGroupsFirstPane() ) {
+						getLeft();
+						fetchOnGroupsFirstPane();
+						setLeft();
 					}
 					currentPane++;
-					console.log(	'currentPane: ' + currentPane );
-					console.log( 'currentTotalPanes: ' + ( currentTotalPanes + 1 ) );
 					container.children().animate( { 'left': moveby } );
+					console.log( 'click' );
+					console.log(	'totalPanes: ' + totalPanes );
+					console.log(	'currentPane: ' + currentPane );
+					console.log( 'currentTotalPanes: ' + currentTotalPanes );
 	      }
 			})
 			$( '#' + settings.prevID ).click( function() {
-				if( currentPane > 0 ){
+				if( currentPane > 1 ){
 	        currentPane--;
-	        console.log( 'currentPane: ' + (currentPane + 1) );
+	        //console.log( 'currentPane: ' + currentPane );
 	        container.children().animate( { 'left': movebyPrev } );
 	      }
 			})
@@ -152,7 +176,7 @@
 		elementsToMove: 3,
 		time: 2000,
 		loadPerFetch: 10,
-		onFirstScroll: function( callback ) {
+		fetchFunction: function( callback ) {
 			callback( true );
 		},
 		totalItems: 60
