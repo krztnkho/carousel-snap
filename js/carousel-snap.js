@@ -15,11 +15,12 @@
 		var container    = $( element );
 		var visibleItems = settings.elementsToMove;
 		var currentLeftValue;
+		var holdOnThisPane;
 
 		var itemLength;
 		var containerLength;
 		var currentTotalPanes;
-		var paneToFetch;
+		var availablePanes;
 		var totalPanes;
 
 		var moveby = '-=' + ( container.children().outerWidth( true ) * visibleItems ) + 'px';
@@ -59,8 +60,8 @@
 
 		var initializeSettings = function () {
 			itemLength = 	container.children().length;
-			paneToFetch = Math.ceil( itemLength / visibleItems );
-			currentTotalPanes = paneToFetch ;
+			availablePanes = Math.ceil( itemLength / visibleItems );
+			currentTotalPanes = availablePanes;
 			totalPanes = Math.ceil( ( settings.totalItems / visibleItems ) );
 		}
 
@@ -69,17 +70,18 @@
 		}
 
 		var fetchOnGroupsFirstPane = function () {
-			console.log( 'Fetch' );
-			console.log(	'totalPanes: ' + totalPanes );
-			console.log(	'currentPane: ' + currentPane );
-			console.log( 'currentTotalPanes: ' + currentTotalPanes );
+			getLeft();
+			domReady = false;
 			settings.fetchFunction( function( domCheck ) {
 				domReady = domCheck;
 				console.log( 'fetchOnThisPane: ' + fetchOnThisPane );
+				fetchOnThisPane = currentTotalPanes + 1;
+				setContainerWidth();
+				holdOnThisPane = currentTotalPanes;
+				initializeSettings();
+				setLeft();
+				animateLeft();
 			} );
-			fetchOnThisPane = currentTotalPanes + 1;
-			setContainerWidth();
-			initializeSettings();
 		}
 
 		var getLeft = function () {
@@ -90,31 +92,39 @@
 			container.children().css( 'left', currentLeftValue );
 		}
 
+		var animateLeft = function () {
+			currentPane++;
+			container.children().animate( { 'left': moveby } );
+			console.log(	'currentPane: ' + currentPane );
+		}
+
+		var moveLeft = function () {
+			if( (( currentPane < currentTotalPanes) && ( holdOnThisPane != currentPane )) || (( holdOnThisPane == currentPane ) && domReady )  ){
+				if ( isGroupsFirstPane() ) {
+					fetchOnGroupsFirstPane();
+				} else {
+					animateLeft();
+				}
+			}
+		}
+
+		var moveRight = function () {
+			if( currentPane > 1 ){
+				currentPane--;
+				console.log( 'currentPane: ' + currentPane );
+				container.children().animate( { 'left': movebyPrev } );
+			}
+		}
+
 		var listenToClick = function () {
 			console.log(	'totalPanes: ' + totalPanes );
 			console.log(	'currentPane: ' + currentPane );
 			console.log( 'currentTotalPanes: ' + currentTotalPanes );
 			$( '#' + settings.nextID ).click( function() {
-				if( (currentPane < currentTotalPanes) && domReady ){
-					if ( isGroupsFirstPane() ) {
-						getLeft();
-						fetchOnGroupsFirstPane();
-						setLeft();
-					}
-					currentPane++;
-					container.children().animate( { 'left': moveby } );
-					console.log( 'click' );
-					console.log(	'totalPanes: ' + totalPanes );
-					console.log(	'currentPane: ' + currentPane );
-					console.log( 'currentTotalPanes: ' + currentTotalPanes );
-	      }
+				moveLeft();
 			})
 			$( '#' + settings.prevID ).click( function() {
-				if( currentPane > 1 ){
-	        currentPane--;
-	        //console.log( 'currentPane: ' + currentPane );
-	        container.children().animate( { 'left': movebyPrev } );
-	      }
+				moveRight();
 			})
 		}
 
