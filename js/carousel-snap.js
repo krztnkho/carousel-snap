@@ -28,9 +28,9 @@
 
 		var initializeSettings = function () {
 			itemLength = 	container.children().length;
+			console.log( 'itemLength ' + itemLength );
 			container.children().css('left', 'auto');
 			currentIndex = 0;
-			visibleItems = 3;
 			remainingPanes = ( itemLength / visibleItems ) - 1;
 		}
 
