@@ -1,0 +1,25 @@
+{
+  "name": "carouselSnap",
+  "version": "1.0.0",
+  "homepage": "https://github.com/krztnkho/carousel-snap",
+  "authors": [
+    "iammary",
+    "krztnkho"
+  ],
+  "description": "infinite scrolling",
+  "main": "index.html",
+  "keywords": [
+    "infinite",
+    "scrolling",
+    "with",
+    "fetch"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
