@@ -18,17 +18,33 @@
 		var parentHolderWidth = container.parent().outerWidth();
 		var containerWidth    = container.children().length * container.children().outerWidth( true );
 
-		var availableItems;
+		var availableItems = container.children().length;;
 		var availablePanes;
 
 		var initializeSettings = function () {
 			containerWidth = container.children().length * container.children().outerWidth( true );
-			availableItems = container.children().length;
 			console.log( 'availableItems: ' + availableItems );
 			availablePanes = Math.ceil( availableItems / elementsToMove );
 		};
 
+		var removeThenAppendElements = function ( shiftLeft ) {
+			if ( shiftLeft ) {
+				var lastItemLeftValue = container.children().last().position().left;
+				for ( var i = 1; i <= settings.elementsToMove; i++ ) {
+					var detachedItem = container.children().eq( 0 ).detach();
+					container.append( detachedItem.css( 'left', lastItemLeftValue + widthPerItem * i ) );
+				}
+			} else {
+				var firstItemLeftValue = container.children().first().position().left;
+				for ( var i = 1; i <= settings.elementsToMove; i++ ) {
+					var detachedItem = container.children().eq( availableItems - 1 ).detach();
+					container.prepend( detachedItem.css( 'left', firstItemLeftValue - widthPerItem * i ) );
+				}
+			}
+		}
+
 		var shiftLeft = function ( updateCurrentPane ) {
+			removeThenAppendElements( true );
 			if ( updateCurrentPane ) {
 				currentPane++;
 			}
@@ -38,6 +54,7 @@
 		}
 
 		var shiftRight = function () {
+			removeThenAppendElements( false );
 			currentPane--;
 			container.children().animate( {
 				'left': movebyPrev
@@ -59,12 +76,10 @@
 		var alignCenter = function () {
 			var nonvisibleItems = ( containerWidth - parentHolderWidth ) / widthPerItem;
 			var itemsToShift    = Math.floor( nonvisibleItems / 2 );
-			var _moveby = moveby;
-			moveby = '-=' + ( widthPerItem * itemsToShift ) + 'px';
-			shiftLeft( false );
-			moveby = _moveby;
-			console.log( 'nonvisibleItems: ' + nonvisibleItems );
-			console.log( 'itemsToShift: ' + itemsToShift );
+			for (var i = 0; i < availableItems; i++) {
+				var moveByItem = widthPerItem * ( i  - itemsToShift );
+				container.children().eq( i ).css( 'left', moveByItem )
+			}
 		}
 
 		var addStylesToItems = function () {
