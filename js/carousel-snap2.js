@@ -55,7 +55,7 @@
 			settings.fetchFunction( function( domCheck ) {
 				domReady = domCheck;
 				firstElement += settings.elementsToMove;
-				lastElement +=settings.elementsToMove;
+				lastElement += settings.elementsToMove;
 				fetchOnThisPane = currentTotalPanes + 1;
 				setContainerWidth();
 				holdOnThisPane = currentTotalPanes;
@@ -73,7 +73,7 @@
 			container.children().css( 'left', currentLeftValue );
 		};
 
-		var fetchOnLastGroupsFromFirstPane = function ( ) {
+		var fetchOnLastGroupsFromFirstPane = function() {
 			fetchOnThisPane = settings.totalPanes;
 			setContainerWidth();
 			holdOnThisPane = currentTotalPanes;
@@ -85,26 +85,41 @@
 		var changeChildrensLeftAtrribute = function( next, current, options, done ) {
 			var count;
 			var len;
+			var flag = options.extra + ( settings.elementsToMove - 1 );
+			var dist = 0;
 			if ( next === true ) {
 				if ( options.left !== 0 ) {
-					for ( count = 0; count < options.extra; count++ ) {
+					for ( count = 0; count < flag; count++ ) {
 						current[ 0 ].children[ count ].setAttribute( 'style', 'left: ' + options.left + 'px' );
 					}
-				} else if ( currentPane === 1 ) {
+				} else if ( firstElement === 1 ) {
 					len = current[ 0 ].children.length;
 					for ( count = 0; count < len; count++ ) {
-						current[ 0 ].children[ count ].setAttribute( 'style', 'left:' + container.children().outerWidth( true ) + 'px' );
+						current[ 0 ].children[ count ].setAttribute( 'style', 'left:' + ( container.children().outerWidth( true ) * settings.elementsToMove ) + 'px' );
 					}
+				} else {
+					dist = firstElement - 1;
+					len = current[ 0 ].children.length;
+					for ( count = 0; count < len; count++ ) {
+						current[ 0 ].children[ count ].setAttribute( 'style', 'left:' + ( ( container.children().outerWidth( true ) * -dist ) + ( container.children().outerWidth( true ) * settings.elementsToMove ) ) + 'px' );
+					}
+
 				}
-			} else if ( options.left !== 0 ) {
+			} else if ( next === false ) {
 				len = current[ 0 ].children.length;
-				if( currentPane !== 1){
-					for ( count = len - 1; count >= lastElement ; count-- ) {
+				dist = (options.left - containerLength);
+				if ( firstElement !== 1 ) {
+					for ( count = len - 1; count >= lastElement; count-- ) {
 						current[ 0 ].children[ count ].setAttribute( 'style', 'left: -' + options.left + 'px' );
 					}
-				}else{
-					for ( count = 0; count < len ; count++ ) {
-						current[ 0 ].children[ count ].setAttribute( 'style', 'left: -306px' );
+					if ( options.extra === 0 && (options.left !== dist )) {
+						for ( count = 0; count < len; count++ ) {
+							current[ 0 ].children[ count ].setAttribute( 'style', 'left: ' + -dist+ 'px' );
+						}
+					}
+				} else {
+					for ( count = 0; count < len; count++ ) {
+						current[ 0 ].children[ count ].setAttribute( 'style', 'left: -' + ( container.children().outerWidth( true ) * settings.elementsToMove ) + 'px' );
 					}
 				}
 			}
@@ -113,13 +128,16 @@
 
 		var updateAndCheckLastElement = function( next, done ) {
 			var distance;
+			var flag = 4 + settings.elementsToMove;
+			var extra = 0;
 			if ( next === true ) {
 				updatePointers( true );
 				distance = lastElement - firstElement;
+
 				if ( distance < 0 ) {
 					done( {
 						'extra': lastElement,
-						'left': container.children().outerWidth( true ) * ( 5 - lastElement )
+						'left': container.children().outerWidth( true ) * ( flag - lastElement )
 					} );
 				} else {
 					done( {
@@ -129,10 +147,12 @@
 				}
 			} else {
 				updatePointers( false );
-				if ( currentPane !== 0 ) {
+				distance = 4 - settings.elementsToMove;
+				extra = ( firstElement > lastElement ) ? lastElement : 0;
+				if ( firstElement !== 0 ) {
 					done( {
-						'extra': 4 - lastElement,
-						'left': container.children().outerWidth( true ) * ( settings.totalItems - ( 3 - lastElement ) )
+						'extra': extra,
+						'left': container.children().outerWidth( true ) * ( settings.totalItems - ( distance - lastElement ) )
 					} );
 				} else {
 					done( {
@@ -144,12 +164,13 @@
 			}
 		};
 		var updatePointers = function( flag ) {
+			var dist, dist2;
 			if ( flag === false ) {
-				firstElement = Math.abs( firstElement - ( settings.elementsToMove ) ) % settings.totalItems;
-				firstElement = ( firstElement === 0 ? settings.totalItems : firstElement );
+				dist = firstElement - ( settings.elementsToMove );
+				firstElement = ( dist <= 0 ) ? ( settings.totalItems + dist ) : dist;
 
-				lastElement = Math.abs( lastElement - ( settings.elementsToMove ) ) % settings.totalItems;
-				lastElement = ( lastElement === 0 ? settings.totalItems : lastElement );
+				dist2 = lastElement - ( settings.elementsToMove );
+				lastElement = ( dist2 <= 0 ) ? ( settings.totalItems + dist2 ) : dist2;
 			} else {
 				firstElement = Math.abs( firstElement + ( settings.elementsToMove ) ) % settings.totalItems;
 				firstElement = ( firstElement === 0 ? settings.totalItems : firstElement );
@@ -189,7 +210,7 @@
 			}
 		};
 
-		var animateRight = function ( ) {
+		var animateRight = function() {
 			currentPane--;
 			updateAndCheckLastElement( false, function( res ) {
 				changeChildrensLeftAtrribute( false, $( element.tagName + '.' + element.className ), {
@@ -206,29 +227,20 @@
 		var moveRight = function() {
 			if ( isGroupsFirstPane() ) {
 				fetchOnLastGroupsFromFirstPane();
-				currentPane = settings.totalPanes;
-			} else if( currentPane === 1){
-				currentPane = 9;
+				currentPane = totalPanes;
+			} else if ( currentPane === 1 ) {
+				currentPane = totalPanes;
 				animateRight();
-			}else{
+			} else {
 				animateRight();
 			}
 		};
 
-		var listenToClick = function() {
-			$( '#' + settings.nextID ).click( function() {
-				moveLeft();
-			} );
-			$( '#' + settings.prevID ).click( function() {
-				moveRight();
-			} );
-		};
 
 		var initialize = function() {
 			appendPrevNextButtons();
 			setContainerWidth();
 			initializeSettings();
-			listenToClick();
 			listenToHover();
 		};
 
@@ -286,7 +298,13 @@
 		} );
 	};
 
+	$.fn.setTotalItems = function ( value ) {
+		$.fn.carouselSnap.defaults.totalItems = value;
+	};
 
+	$.fn.getTotalItems = function ( ) {
+		return $.fn.carouselSnap.defaults.totalItems;
+	};
 
 	$.fn.carouselSnap.defaults = {
 		nextID: 'next-slide',

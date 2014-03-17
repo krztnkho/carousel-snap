@@ -19,10 +19,10 @@
 	$( '.vid-tab' ).carouselSnap( {
 		nextID: 'nextSlide',
 		prevID: 'previousSlide',
-		elementsToMove: 1,
+		elementsToMove: 2,
 	//	fetchFunction: loadMoreElements,
 		loadPerFetch: 4, //24
-		totalItems: 8,
+		totalItems: 9,
 		time: 2000
 	} );
 
