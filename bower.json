@@ -1,0 +1,27 @@
+{
+  "name": "Circular Carousel",
+  "version": "1.0.0",
+  "homepage": "https://github.com/iammary/carousel-snap",
+  "authors": [
+    "iammary"
+  ],
+  "description": "jQuery Plugin for Circular Carousel that can support Lazy Loading functionality",
+  "main": "carousel-snap.js",
+  "keywords": [
+    "circular",
+    "carousel",
+    "horizontal",
+    "slider",
+    "lazy",
+    "loading"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/js/libs",
+    "test",
+    "tests"
+  ]
+}

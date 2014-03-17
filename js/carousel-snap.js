@@ -23,7 +23,6 @@
 
 		var initializeSettings = function () {
 			containerWidth = container.children().length * container.children().outerWidth( true );
-			console.log( 'availableItems: ' + availableItems );
 			availablePanes = Math.ceil( availableItems / elementsToMove );
 		};
 
@@ -62,14 +61,11 @@
 		}
 
 		var listenToClick = function () {
-			console.log( 'currentPane: ', currentPane );
 			$( '#' + settings.nextID ).click( function () {
 				shiftLeft( true );
-				console.log( 'currentPane: ', currentPane );
 			} )
 			$( '#' + settings.prevID ).click( function () {
 				shiftRight();
-				console.log( 'currentPane: ', currentPane );
 			} )
 		}
 

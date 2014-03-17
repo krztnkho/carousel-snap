@@ -1,7 +1,7 @@
 Carousel Snap
 =============
 
-A jQuery carousel plugin with lazy loading functionality.
+A jQuery carousel plugin ready for lazy loading functionality.
 
 ### Demo
 
@@ -9,10 +9,13 @@ A jQuery carousel plugin with lazy loading functionality.
 
 ### How to use
 
-1. Prepare the markup holder
+1. Identify the container of the items
 
 	```HTML
-	<div id="carousel"></div>
+	<ul id="carousel">
+		<li> 1 </li>
+		<li> ... </li>
+	</ul>
 	```
 
 2. Invoke the carouselSnap() function
@@ -27,7 +30,10 @@ Below is an example of the code with all available options and their defaults:
 
 ```JavaScript
 $( '#carousel' ).carouselSnap({
-
+		nextID: 'next-slide',
+		prevID: 'previous-slide',
+		elementsToMove: 4,
+		startOnCenter: true
 });
 ```
 
