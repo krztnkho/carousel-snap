@@ -1,11 +1,11 @@
-Carousel Snap
-=============
+Circular Carousel Snap
+======================
 
-A jQuery carousel plugin ready for lazy loading functionality.
+A jQuery circular carousel plugin ready for lazy loading functionality.
 
 ### Demo
 
-
+http://iammary.github.io/carousel-snap/
 
 ### How to use
 
@@ -36,4 +36,8 @@ $( '#carousel' ).carouselSnap({
 		startOnCenter: true
 });
 ```
+
+### Code Reference
+
+Checkout development branch at https://github.com/iammary/carousel-snap/tree/dev
 
