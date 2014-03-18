@@ -1,7 +1,7 @@
 ( function( $ ){
 
 	$( '.vid-tab' ).carouselSnap( {
-		elementsToMove: 1
+		elementsToMove: 4
 	} );
 
 })( jQuery );

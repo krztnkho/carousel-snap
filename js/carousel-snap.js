@@ -17,8 +17,8 @@
 		var movebyPrev        = '+=' + ( widthPerItem * elementsToMove ) + 'px';
 		var parentHolderWidth = container.parent().outerWidth();
 		var containerWidth    = container.children().length * container.children().outerWidth( true );
-
-		var availableItems = container.children().length;;
+		var availableItems    = container.children().length;
+		var countAnimate      = 1;
 		var availablePanes;
 
 		var initializeSettings = function () {
@@ -26,37 +26,65 @@
 			availablePanes = Math.ceil( availableItems / elementsToMove );
 		};
 
-		var removeThenAppendElements = function ( shiftLeft ) {
-			if ( shiftLeft ) {
+		var appendItems = function ( shiftedToLeft ) {
+
+			if ( shiftedToLeft ) {
 				var lastItemLeftValue = container.children().last().position().left;
 				for ( var i = 1; i <= settings.elementsToMove; i++ ) {
-					var detachedItem = container.children().eq( 0 ).detach();
-					container.append( detachedItem.css( 'left', lastItemLeftValue + widthPerItem * i ) );
+					var clonedItem = container.children().eq( i - 1 ).clone();
+					container.append( clonedItem.css( 'left', lastItemLeftValue + widthPerItem * i ) );
 				}
+
+
 			} else {
 				var firstItemLeftValue = container.children().first().position().left;
 				for ( var i = 1; i <= settings.elementsToMove; i++ ) {
-					var detachedItem = container.children().eq( availableItems - 1 ).detach();
-					container.prepend( detachedItem.css( 'left', firstItemLeftValue - widthPerItem * i ) );
+					var clonedItem = container.children().eq( availableItems - 1 ).clone();
+					container.prepend( clonedItem.css( 'left', firstItemLeftValue - widthPerItem * i ) );
 				}
 			}
 		}
 
+		var removeTempItems = function ( shiftedToLeft ) {
+			if ( countAnimate == ( availableItems + settings.elementsToMove ) ) {
+				countAnimate = 1;
+				if ( shiftedToLeft ) {
+					for ( var i = 1; i <= settings.elementsToMove; i++ ) {
+						container.children().first().remove();
+					}
+				} else {
+					for ( var i = 1; i <= settings.elementsToMove; i++ ) {
+						container.children().last().remove();
+					}
+				}
+			} else {
+				countAnimate++;
+			}
+		}
+
 		var shiftLeft = function ( updateCurrentPane ) {
-			removeThenAppendElements( true );
+			appendItems( true );
 			if ( updateCurrentPane ) {
 				currentPane++;
 			}
 			container.children().animate( {
 				'left': moveby
+			}, {
+				'complete': function () {
+					removeTempItems( true )
+				}
 			} );
 		}
 
 		var shiftRight = function () {
-			removeThenAppendElements( false );
+			appendItems( false );
 			currentPane--;
 			container.children().animate( {
 				'left': movebyPrev
+			}, {
+				'complete': function () {
+					removeTempItems( false )
+				}
 			} );
 		}
 
