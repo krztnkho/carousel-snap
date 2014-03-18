@@ -100,3 +100,12 @@ li.dummy.green {
 li.dummy.blue {
 	background: rgba(0,0,255,.3);
 }
+li > div {
+	font-size      : 88px;
+	display        : block;
+	vertical-align : middle;
+	text-align     : center;
+	margin         : 32% 0;
+	text-shadow    : rgba(0,0,0,.5) 1px 1px 1px;
+	color          : white;
+}
