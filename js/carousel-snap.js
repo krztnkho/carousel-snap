@@ -97,12 +97,31 @@
 			} )
 		}
 
-		var alignCenter = function () {
+		var alignCenter = function ( alignFlag ) {
 			var nonvisibleItems = ( containerWidth - parentHolderWidth ) / widthPerItem;
-			var itemsToShift    = Math.floor( nonvisibleItems / 2 );
+			var itemsToShift;
+			if ( alignFlag ) {
+				itemsToShift = Math.floor( nonvisibleItems / 2 );
+			} else {
+				itemsToShift = 0;
+			}
 			for (var i = 0; i < availableItems; i++) {
 				var moveByItem = widthPerItem * ( i  - itemsToShift );
 				container.children().eq( i ).css( 'left', moveByItem )
+			}
+		}
+
+		var hidePrevNextLink = function () {
+			container.parent().find('.prevNext').hide();
+		}
+
+		var checkItemsTotal = function () {
+			if ( availableItems <= settings.elementsToMove ) {
+				hidePrevNextLink();
+				alignCenter( false );
+			} else {
+				alignCenter( true );
+				listenToClick();
 			}
 		}
 
@@ -112,9 +131,7 @@
 				.addClass( function( index ) {
 					return 'carousel-snap-' + index;
 				} );
-			if ( settings.startOnCenter ) {
-				alignCenter();
-			}
+				checkItemsTotal();
 		};
 
 		var setContainerWidth = function () {
@@ -130,7 +147,6 @@
 			setContainerWidth();
 			addStylesToItems();
 			initializeSettings();
-			listenToClick();
 		};
 		initialize();
 
