@@ -4,11 +4,12 @@
 	var color           = 0;
 	var fetchMultiplier = 0;
 
-	var loadInitialItems = function () {
+	var loadInitialItems = function ( color ) {
+		color = color ? color : ''
 		for( var j = 0; j < 4; j++ ) {
 			for ( var i = 1; i <= 6; i++ ) {
 				var countItem = i + ( j * 6 ) + ( fetchMultiplier * 24 );
-				$('.vid-tab').append('<li class="dummy ' + colorArrays[ j ] + '"><div>' + countItem + '</div></li>');
+				$('.vid-tab').append('<li class="dummy ' + color + '"><div>' + countItem + '</div></li>');
 			}
 		}
 		fetchMultiplier++;

@@ -11,7 +11,6 @@
 		var settings          = $.extend( {}, $.fn.carouselSnap.defaults, options );
 		var elementsToMove    = settings.elementsToMove;
 		var container         = $( element );
-		var currentPane       = 1;
 		var widthPerItem      = container.children().outerWidth( true );
 		var moveby            = '-=' + ( widthPerItem * elementsToMove ) + 'px';
 		var movebyPrev        = '+=' + ( widthPerItem * elementsToMove ) + 'px';
@@ -48,6 +47,7 @@
 		var removeTempItems = function ( shiftedToLeft ) {
 			if ( countAnimate == ( availableItems + settings.elementsToMove ) ) {
 				countAnimate = 1;
+				listenToClick();
 				if ( shiftedToLeft ) {
 					for ( var i = 1; i <= settings.elementsToMove; i++ ) {
 						container.children().first().remove();
@@ -62,39 +62,40 @@
 			}
 		}
 
-		var shiftLeft = function ( updateCurrentPane ) {
+		var shiftLeft = function () {
 			appendItems( true );
-			if ( updateCurrentPane ) {
-				currentPane++;
-			}
 			container.children().animate( {
 				'left': moveby
 			}, {
-				'complete': function () {
-					removeTempItems( true )
-				}
+					'start'    : unbindListenToClick,
+					'complete' : function () {
+						removeTempItems( true )
+					}
 			} );
 		}
 
 		var shiftRight = function () {
 			appendItems( false );
-			currentPane--;
 			container.children().animate( {
 				'left': movebyPrev
 			}, {
-				'complete': function () {
-					removeTempItems( false )
-				}
+					'start'    : unbindListenToClick,
+					'complete' : function () {
+						removeTempItems( false );
+					}
 			} );
 		}
 
+		var unbindListenToClick = function () {
+			console.log( 'unbind' );
+			$( '#' + settings.nextID ).off( 'click', shiftLeft);
+			$( '#' + settings.prevID ).off( 'click', shiftRight);
+		}
+
 		var listenToClick = function () {
-			$( '#' + settings.nextID ).click( function () {
-				shiftLeft( true );
-			} )
-			$( '#' + settings.prevID ).click( function () {
-				shiftRight();
-			} )
+			console.log( 'bind' );
+			$( '#' + settings.nextID ).on( 'click', shiftLeft);
+			$( '#' + settings.prevID ).on( 'click', shiftRight);
 		}
 
 		var alignCenter = function ( alignFlag ) {
