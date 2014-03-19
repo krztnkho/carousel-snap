@@ -8,13 +8,33 @@ div {
 ul {
 	list-style-type : none;
 }
-#holder {
+#holder, #appendNow {
 	width    : 1224px;
 	display  : block;
 	padding  : 0;
 	margin   : 0 auto;
 	overflow : hidden;
 	position : relative;
+}
+#appendNow {
+	text-align     : right;
+	padding-right  : 15px;
+	font-size      : 16px;
+	font-weight    : bold;
+	color          : #0000ff;
+	text-transform : uppercase;
+	cursor         : pointer;
+}
+#loading {
+	position       : absolute;
+	top            : 0;
+	right          : 0;
+	width          : 70px;
+	background     : rgba(0,0,0,.2);
+	padding        : 10px;
+	color          : #fff;
+	text-transform : uppercase;
+	min-height     :  18px;
 }
 .vid-tab {
 	padding  : 0;

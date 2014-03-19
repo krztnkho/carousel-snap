@@ -4,66 +4,60 @@
 	var color           = 0;
 	var fetchMultiplier = 0;
 
-	var loadInitialItems = function ( color ) {
-		color = color ? color : ''
-		for( var j = 0; j < 4; j++ ) {
-			for ( var i = 1; i <= 6; i++ ) {
-				var countItem = i + ( j * 6 ) + ( fetchMultiplier * 24 );
-				$('.vid-tab').append('<li class="dummy ' + color + '"><div>' + countItem + '</div></li>');
-			}
-		}
-		fetchMultiplier++;
+	/* Loading effect */
+	var loadingEffect = {
+		'show' :	function () {
+								var x = 0;
+								$( 'body' ).append( '<div id="loading"></div>' )
+								setInterval( function () {
+									x = ++x % 4;
+									$( '#loading' ).html( 'loading' + Array( x + 1 ).join( '.' ) );
+								}, 300 );
+							},
+		'hide' :	function () {
+								$( '#loading' ).remove();
+							}
 	}
 
-	// var apiCallSimulation = function () {
-	// 	var loadMoreElements = function( callback ) {
-	// 		setTimeout( function() {
-	// 			for (var i = 1; i <= 6; i++) {
-	// 				$('.vid-tab').append('<li class="dummy ' + colorArrays[ color ] + '"></li>');
-	// 			};
-	// 			if( color < colorArrays.length ) {
-	// 				color++;
-	// 			} else {
-	// 				color = 0;
-	// 			}
-	// 			callback( 1 );
-	// 		}, 3000);
-	// 	}
-	// }
+	var loadElements = function ( color, callback ) {
 
-	loadInitialItems();
+		/* Unbind trigger to API Call event */
+		$( '#appendNow' ).off( 'click', loadMoreElements );
 
-	$( '.vid-tab' ).carouselSnap( {
-		elementsToMove: 4
-	} );
+		color = color ? color : '';
+		loadingEffect.show();
+
+		/* new elements rendered */
+		var items = '';
+
+		/* API Call Simulation */
+		setTimeout( function () {
+			for( var j = 0; j < 4; j++ ) {
+				for ( var i = 1; i <= 6; i++ ) {
+					var countItem = i + ( j * 6 ) + ( fetchMultiplier * 24 );
+					items = items + '<li class="dummy ' + color + '"><div>' + countItem + '</div></li>';
+				}
+			}
+			fetchMultiplier++;
+			$( '#appendNow' ).on( 'click', loadMoreElements );
+			callback( items );
+		}, 1000 )
+	}
+
+	loadElements( 0, function( items ) {
+			$('.vid-tab').append( items );
+			loadingEffect.hide();
+			$( '.vid-tab' ).carouselSnap( {
+				elementsToMove: 4
+			} );
+	} )
+
+	var loadMoreElements = function () {
+		loadElements( colorArrays[ color++ ], function( items ) {
+			$('.vid-tab').carouselSnap.appendItems( items )
+			loadingEffect.hide();
+		} );
+		color = ( color > 3 ) ? 0 : color;
+	}
 
 })( jQuery );
-
-
-// ( function( $ ){
-
-// 	var colorArrays = [ 'black', 'red', 'green', 'blue' ];
-// 	var color = 0;
-// 	var loadMoreElements = function( callback ) {
-// 		setTimeout( function() {
-// 			for (var i = 1; i <= 6; i++) {
-// 				$('.vid-tab').append('<li class="dummy ' + colorArrays[ color ] + '"></li>');
-// 			};
-// 			if( color < colorArrays.length ) {
-// 				color++;
-// 			} else {
-// 				color = 0;
-// 			}
-// 			callback( 1 );
-// 		}, 3000);
-// 	}
-
-// 	$('.vid-tab').carouselSnap({
-// 		nextID: 'nextSlide',
-// 		prevID: 'previousSlide',
-// 		elementsToMove: 3,
-// 		fetchFunction: loadMoreElements,
-// 		loadPerFetch: 6,
-// 		totalItems: 36
-// 	});
-// })( jQuery );
