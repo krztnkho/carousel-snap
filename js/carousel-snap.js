@@ -4,36 +4,37 @@
  *
  **************************************************************/
 
-( function ( $ ) {
+( function( $ ) {
 	'use strict';
 
 	var requestForAppendActive = false;
-	var itemsToBeAdded         = '';
+	var itemsToBeAdded = '';
 
-	var CarouselSnap = function ( element, options ) {
+	var CarouselSnap = function( element, options ) {
 
-		var settings          = $.extend( {}, $.fn.carouselSnap.defaults, options );
-		var elementsToMove    = settings.elementsToMove;
-		var container         = $( element );
-		var widthPerItem      = container.children().outerWidth( true );
-		var moveby            = '-=' + ( widthPerItem * elementsToMove ) + 'px';
-		var movebyPrev        = '+=' + ( widthPerItem * elementsToMove ) + 'px';
+		var settings = $.extend( {}, $.fn.carouselSnap.defaults, options );
+		var elementsToMove = settings.elementsToMove;
+		var container = $( element );
+		var widthPerItem = container.children().outerWidth( true );
+		var moveby = '-=' + ( widthPerItem * elementsToMove ) + 'px';
+		var movebyPrev = '+=' + ( widthPerItem * elementsToMove ) + 'px';
 		var parentHolderWidth = container.parent().outerWidth();
-		var containerWidth    = container.children().length * container.children().outerWidth( true );
-		var availableItems    = container.children().length;
-		var countAnimate      = 1;
+		var containerWidth = container.children().length * container.children().outerWidth( true );
+		var availableItems = container.children().length;
+		var countAnimate = 1;
 		var availablePanes;
+		var timeoutId = 0;
 
-		var initializeSettings = function () {
+		var initializeSettings = function() {
 			containerWidth = container.children().length * container.children().outerWidth( true );
 			availablePanes = Math.ceil( availableItems / elementsToMove );
 		};
 
-		var lastItemLeftValue = function () {
-			return container.children().last().position().left
-		}
+		var lastItemLeftValue = function() {
+			return container.children().last().position().left;
+		};
 
-		var appendItems = function ( shiftedToLeft ) {
+		var appendItems = function( shiftedToLeft ) {
 			if ( shiftedToLeft ) {
 				var lastItemLeftValueInt = lastItemLeftValue();
 				for ( var i = 1; i <= settings.elementsToMove; i++ ) {
@@ -47,9 +48,9 @@
 					container.prepend( clonedItem.css( 'left', firstItemLeftValue - widthPerItem * i ) );
 				}
 			}
-		}
+		};
 
-		var removeTempItems = function ( shiftedToLeft ) {
+		var removeTempItems = function( shiftedToLeft ) {
 			if ( countAnimate == ( availableItems + settings.elementsToMove ) ) {
 				if ( shiftedToLeft ) {
 					for ( var i = 1; i <= settings.elementsToMove; i++ ) {
@@ -66,15 +67,15 @@
 			} else {
 				countAnimate++;
 			}
-		}
+		};
 
-		var checkForNewItems = function () {
+		var checkForNewItems = function() {
 			if ( requestForAppendActive ) {
 				var currentItemsLength = availableItems;
 				var lastItemLeftValueInt = lastItemLeftValue();
 				container.append( itemsToBeAdded );
 				availableItems = container.children().length;
-				for (var i = currentItemsLength; i < availableItems; i++) {
+				for ( var i = currentItemsLength; i < availableItems; i++ ) {
 					var leftValue = lastItemLeftValueInt + ( widthPerItem * ( i - currentItemsLength + 1 ) );
 					container.children().eq( i ).css( 'left', leftValue );
 				}
@@ -84,41 +85,63 @@
 			}
 		};
 
-		var shiftLeft = function () {
+		var shiftLeft = function() {
 			appendItems( true );
 			container.children().animate( {
 				'left': moveby
 			}, {
-					'start'    : unbindListenToClick,
-					'complete' : function () {
-						removeTempItems( true );
-					}
+				'start': unbindListenToClick,
+				'complete': function() {
+					removeTempItems( true );
+				}
 			} );
-		}
+		};
 
-		var shiftRight = function () {
+		var shiftRight = function() {
 			appendItems( false );
 			container.children().animate( {
 				'left': movebyPrev
 			}, {
-					'start'    : unbindListenToClick,
-					'complete' : function () {
-						removeTempItems( false );
-					}
+				'start': unbindListenToClick,
+				'complete': function() {
+					removeTempItems( false );
+				}
 			} );
-		}
+		};
 
-		var unbindListenToClick = function () {
-			$( '#' + settings.nextID ).off( 'click', shiftLeft);
-			$( '#' + settings.prevID ).off( 'click', shiftRight);
-		}
+		var unbindListenToClick = function() {
+			$( '#' + settings.nextID ).off( 'click', shiftLeft );
+			$( '#' + settings.prevID ).off( 'click', shiftRight );
+		};
 
-		var listenToClick = function () {
-			$( '#' + settings.nextID ).on( 'click', shiftLeft);
-			$( '#' + settings.prevID ).on( 'click', shiftRight);
-		}
+		var listenToClick = function() {
+			$( '#' + settings.nextID ).on( 'click', shiftLeft );
+			$( '#' + settings.prevID ).on( 'click', shiftRight );
+		};
 
-		var alignCenter = function ( alignFlag ) {
+		var checkHover = function( element, callback ) {
+			$( element ).hover( function() {
+				//start time
+				if ( !timeoutId ) {
+					timeoutId = window.setInterval( function() {
+						callback();
+					}, settings.time );
+				}
+			}, function() {
+				//reset time
+				if ( timeoutId ) {
+					window.clearInterval( timeoutId );
+					timeoutId = null;
+				}
+			} );
+		};
+
+		var listenToHover = function() {
+			checkHover( '#' + settings.nextID, shiftLeft );
+			checkHover( '#' + settings.prevID, shiftRight );
+		};
+
+		var alignCenter = function( alignFlag ) {
 			var nonvisibleItems = ( containerWidth - parentHolderWidth ) / widthPerItem;
 			var itemsToShift;
 			if ( alignFlag ) {
@@ -126,17 +149,17 @@
 			} else {
 				itemsToShift = 0;
 			}
-			for (var i = 0; i < availableItems; i++) {
-				var moveByItem = widthPerItem * ( i  - itemsToShift );
-				container.children().eq( i ).css( 'left', moveByItem )
+			for ( var i = 0; i < availableItems; i++ ) {
+				var moveByItem = widthPerItem * ( i - itemsToShift );
+				container.children().eq( i ).css( 'left', moveByItem );
 			}
-		}
+		};
 
-		var hidePrevNextLink = function () {
-			container.parent().find('.prevNext').hide();
-		}
+		var hidePrevNextLink = function() {
+			container.parent().find( '.prevNext' ).hide();
+		};
 
-		var checkItemsTotal = function () {
+		var checkItemsTotal = function() {
 			if ( availableItems <= settings.elementsToMove ) {
 				hidePrevNextLink();
 				alignCenter( false );
@@ -144,36 +167,37 @@
 				alignCenter( true );
 				listenToClick();
 			}
-		}
+		};
 
-		var addStylesToItems = function ( start ) {
-			for (var i = start; i < availableItems; i++) {
+		var addStylesToItems = function( start ) {
+			for ( var i = start; i < availableItems; i++ ) {
 				container.children().eq( i )
-				.css( 'position', 'absolute' )
-				.addClass( 'carousel-snap-' + i );
+					.css( 'position', 'absolute' )
+					.addClass( 'carousel-snap-' + i );
 			}
 		};
 
-		var setContainerWidth = function () {
+		var setContainerWidth = function() {
 			container.css( 'width', containerWidth );
-		}
+		};
 
-		var appendPrevNextButtons = function () {
+		var appendPrevNextButtons = function() {
 			container.after( '<div class="prevNext prevLink" id="' + settings.prevID + '">Previous</div><div class="prevNext nextLink" id="' + settings.nextID + '">Next</div>' );
 		};
 
-		var initialize = function () {
+		var initialize = function() {
 			appendPrevNextButtons();
 			setContainerWidth();
 			addStylesToItems( 0 );
 			checkItemsTotal();
 			initializeSettings();
+			listenToHover();
 		};
 		initialize();
 	};
 
-	$.fn.carouselSnap = function ( options ) {
-		return this.each( function ( key, value ) {
+	$.fn.carouselSnap = function( options ) {
+		return this.each( function( key, value ) {
 			var element = $( this );
 			if ( element.data( 'carouselSnap' ) ) {
 				return element.data( 'carouselSnap' );
@@ -183,16 +207,17 @@
 		} );
 	};
 
-	$.fn.carouselSnap.appendItems = function ( items ) {
+	$.fn.carouselSnap.appendItems = function( items ) {
 		requestForAppendActive = true;
 		itemsToBeAdded = itemsToBeAdded + items;
-	}
+	};
 
 	$.fn.carouselSnap.defaults = {
 		nextID: 'next-slide',
 		prevID: 'previous-slide',
 		elementsToMove: 4,
 		startOnCenter: true,
+		time: 1500
 	};
 
 } )( jQuery );
